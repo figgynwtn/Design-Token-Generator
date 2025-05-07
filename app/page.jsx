@@ -201,25 +201,27 @@ export default function DesignTokenGenerator() {
           </div>
 
           <div className="space-y-6">
-            <div className={`rounded-xl p-1 transition-colors duration-300 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
-            <div className="flex space-x-1">
+          <div className={`rounded-xl p-1 transition-colors duration-300 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+            <div className="flex overflow-x-auto pb-1">
+                <div className="flex space-x-1 min-w-max"> 
                 {['preview', 'CSS', 'tailwind', 'figma', 'share'].map((tab) => (
-                <button
+                    <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-4 py-2 text-sm font-medium rounded-lg flex-1 transition-all duration-200
-                    ${activeTab === tab
+                    className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
+                        activeTab === tab
                         ? isDarkMode
-                        ? 'bg-gray-600 text-white shadow-md'
-                        : 'bg-white text-gray-900 shadow-md'
+                            ? 'bg-gray-600 text-white shadow-md'
+                            : 'bg-white text-gray-900 shadow-md'
                         : isDarkMode
                         ? 'text-gray-300 hover:bg-gray-600 hover:text-white'
                         : 'text-gray-600 hover:bg-gray-200'
                     }`}
-                >
+                    >
                     {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                </button>
+                    </button>
                 ))}
+                </div>
             </div>
             </div>
 

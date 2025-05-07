@@ -69,7 +69,7 @@ export default function DesignTokenGenerator() {
     setIsSpinning(true);
     const randomPalette = generateRandomTheme();
     setColor(randomPalette.primary);
-    setTimeout(() => setIsSpinning(false), 500); // Match the animation duration
+    setTimeout(() => setIsSpinning(false), 500);
   };
 
   const handleDragStart = (colorName) => {
@@ -97,7 +97,6 @@ export default function DesignTokenGenerator() {
 
   return (
     <div className={`min-h-screen transition-all duration-300 ease-in-out ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      {/* Gradient Header */}
       <header className={`bg-gradient-to-r from-blue-500 to-purple-600 py-6 shadow-lg ${isDarkMode ? 'shadow-gray-800' : 'shadow-gray-200'}`}>
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-bold text-white text-center">Design Token Generator</h1>
@@ -107,7 +106,6 @@ export default function DesignTokenGenerator() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Color Picker Section */}
           <div className={`rounded-xl p-6 shadow-lg transition-all duration-300 ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
             <div className="flex justify-between items-center mb-6">
               <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
@@ -151,7 +149,6 @@ export default function DesignTokenGenerator() {
               />
             </div>
 
-            {/* Shuffle Button Section */}
             <div className="mt-6">
             <button
                 onClick={handleShuffleTheme}
@@ -166,7 +163,6 @@ export default function DesignTokenGenerator() {
             </button>
             </div>
 
-            {/* Color Palette Grid */}
             <div className="mt-8">
               <h3 className={`text-lg font-medium mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
                 Generated Palette
@@ -204,9 +200,7 @@ export default function DesignTokenGenerator() {
             </div>
           </div>
 
-          {/* Preview & Output Section */}
           <div className="space-y-6">
-            {/* Tabs */}
             <div className={`rounded-xl p-1 transition-colors duration-300 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
             <div className="flex space-x-1">
                 {['preview', 'CSS', 'tailwind', 'figma', 'share'].map((tab) => (
@@ -229,7 +223,6 @@ export default function DesignTokenGenerator() {
             </div>
             </div>
 
-            {/* Tab Content */}
             <div className={`rounded-xl p-6 shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
               {activeTab === 'preview' && (
                 <div className="space-y-6">
@@ -237,9 +230,7 @@ export default function DesignTokenGenerator() {
                     UI Components Preview
                   </h3>
                   
-                  {/* Buttons Section */}
                   <div className="flex flex-wrap gap-4">
-                    {/* Primary Button */}
                     <div className="relative">
                     <button
                         className="px-6 py-3 rounded-lg font-medium shadow-md transition-transform hover:scale-105"
@@ -253,13 +244,12 @@ export default function DesignTokenGenerator() {
                     </button>
                     </div>
 
-                    {/* Secondary Button */}
                     <div className="relative">
                     <button
                         className="px-6 py-3 rounded-lg font-medium border shadow-sm transition-transform hover:scale-105"
                         style={{ 
-                        backgroundColor: isDarkMode ? palette.neutralDark : palette.neutralLight, // Matches card bg
-                        borderColor: palette.neutral, // Matches card border
+                        backgroundColor: isDarkMode ? palette.neutralDark : palette.neutralLight,
+                        borderColor: palette.neutral,
                         color: getContrastColor(isDarkMode ? palette.neutralDark : palette.neutralLight)
                         }}
                     >
@@ -268,9 +258,7 @@ export default function DesignTokenGenerator() {
                     </div>
                   </div>
 
-                  {/* Card Section */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Primary Card */}
                     <div className="relative">
                     <div
                         className="p-6 rounded-xl shadow-md transition-transform hover:scale-[1.01] h-full"
@@ -287,7 +275,6 @@ export default function DesignTokenGenerator() {
                       </div>
                     </div>
 
-                    {/* Secondary Card */}
                     <div className="relative">
                       <div
                         className="p-6 rounded-xl shadow-md transition-transform hover:scale-[1.01] h-full"
@@ -485,7 +472,6 @@ export default function DesignTokenGenerator() {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className={`py-6 text-center transition-colors duration-300 ${isDarkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-600'}`}>
         <p className="font-medium">Design Token Generator</p>
         <p className="text-sm mt-1">Built with Next.js, Tailwind CSS, and React Colorful</p>

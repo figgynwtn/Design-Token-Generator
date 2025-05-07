@@ -11,6 +11,7 @@ export default function DesignTokenGenerator() {
   const [activeTab, setActiveTab] = useState('preview');
   const [shareUrl, setShareUrl] = useState('');
   const [draggedColor, setDraggedColor] = useState(null);
+  const [isSpinning, setIsSpinning] = useState(false);
   
   const palette = generatePalette(color);
 
@@ -65,8 +66,10 @@ export default function DesignTokenGenerator() {
   };
 
   const handleShuffleTheme = () => {
+    setIsSpinning(true);
     const randomPalette = generateRandomTheme();
     setColor(randomPalette.primary);
+    setTimeout(() => setIsSpinning(false), 500); // Match the animation duration
   };
 
   const handleDragStart = (colorName) => {
@@ -93,7 +96,7 @@ export default function DesignTokenGenerator() {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen transition-all duration-300 ease-in-out ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Gradient Header */}
       <header className={`bg-gradient-to-r from-blue-500 to-purple-600 py-6 shadow-lg ${isDarkMode ? 'shadow-gray-800' : 'shadow-gray-200'}`}>
         <div className="container mx-auto px-4">
@@ -105,7 +108,7 @@ export default function DesignTokenGenerator() {
       <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Color Picker Section */}
-          <div className={`rounded-xl p-6 shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
+          <div className={`rounded-xl p-6 shadow-lg transition-all duration-300 ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
             <div className="flex justify-between items-center mb-6">
               <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
                 Color Selection
@@ -150,17 +153,17 @@ export default function DesignTokenGenerator() {
 
             {/* Shuffle Button Section */}
             <div className="mt-6">
-              <button
+            <button
                 onClick={handleShuffleTheme}
-                className={`w-full px-4 py-2 rounded-lg flex items-center justify-center gap-2 ${
-                  isDarkMode 
-                    ? 'bg-purple-600 hover:bg-purple-700 text-white' 
-                    : 'bg-purple-500 hover:bg-purple-600 text-white'
-                }`}
-              >
-                <ArrowPathIcon className="h-5 w-5" />
-                Shuffle Colors
-              </button>
+                className={`w-full px-4 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-200 
+                    ${isDarkMode 
+                    ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-lg hover:shadow-purple-500/20' 
+                    : 'bg-blue-500 hover:bg-blue-600 text-white shadow-lg hover:shadow-blue-500/20'
+                    }`}
+                >
+                <ArrowPathIcon className={`h-5 w-5 ${isSpinning ? 'animate-spin-once' : ''}`} />
+                <span className="font-medium">Generate Random Palette</span>
+            </button>
             </div>
 
             {/* Color Palette Grid */}
@@ -179,15 +182,15 @@ export default function DesignTokenGenerator() {
                     onDrop={() => handleDrop(name)}
                   >
                     <div
-                      className="w-full h-16 rounded-lg border-2 shadow-sm cursor-move hover:border-blue-400 transition-colors"
-                      style={{ 
-                        backgroundColor: value,
-                        borderColor: draggedColor === name 
-                          ? '#60a5fa' 
-                          : isDarkMode 
-                            ? 'rgba(255,255,255,0.1)' 
-                            : 'rgba(0,0,0,0.05)'
-                      }}
+                        className="w-full h-16 rounded-lg border-2 shadow-sm cursor-move transition-all duration-200 hover:scale-105 hover:shadow-md"
+                        style={{ 
+                            backgroundColor: value,
+                            borderColor: draggedColor === name 
+                            ? (isDarkMode ? '#8b5cf6' : '#3b82f6')
+                            : isDarkMode 
+                                ? 'rgba(255,255,255,0.1)' 
+                                : 'rgba(0,0,0,0.05)'
+                        }}
                     />
                     <span className={`text-xs mt-2 font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                       {name.replace(/([A-Z])/g, ' $1').trim()}
@@ -204,26 +207,26 @@ export default function DesignTokenGenerator() {
           {/* Preview & Output Section */}
           <div className="space-y-6">
             {/* Tabs */}
-            <div className={`rounded-xl p-1 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
-              <div className="flex space-x-1">
+            <div className={`rounded-xl p-1 transition-colors duration-300 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+            <div className="flex space-x-1">
                 {['preview', 'CSS', 'tailwind', 'figma', 'share'].map((tab) => (
-                  <button
+                <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-4 py-2 text-sm font-medium rounded-lg flex-1 transition-colors ${
-                      activeTab === tab
+                    className={`px-4 py-2 text-sm font-medium rounded-lg flex-1 transition-all duration-200
+                    ${activeTab === tab
                         ? isDarkMode
-                          ? 'bg-gray-800 text-white'
-                          : 'bg-white text-gray-900 shadow'
+                        ? 'bg-gray-600 text-white shadow-md'
+                        : 'bg-white text-gray-900 shadow-md'
                         : isDarkMode
-                        ? 'text-gray-300 hover:bg-gray-600'
+                        ? 'text-gray-300 hover:bg-gray-600 hover:text-white'
                         : 'text-gray-600 hover:bg-gray-200'
                     }`}
-                  >
+                >
                     {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                  </button>
+                </button>
                 ))}
-              </div>
+            </div>
             </div>
 
             {/* Tab Content */}
@@ -238,54 +241,30 @@ export default function DesignTokenGenerator() {
                   <div className="flex flex-wrap gap-4">
                     {/* Primary Button */}
                     <div className="relative">
-                      <button
+                    <button
                         className="px-6 py-3 rounded-lg font-medium shadow-md transition-transform hover:scale-105"
                         style={{ 
-                          backgroundColor: palette.primary, 
-                          color: getContrastColor(palette.primary) 
+                        backgroundColor: isDarkMode ? palette.primaryDark : palette.primaryLight,
+                        border: `1px solid ${palette.primary}`, 
+                        color: getContrastColor(isDarkMode ? palette.primaryDark : palette.primaryLight) 
                         }}
-                      >
+                    >
                         Primary Button
-                      </button>
-                      <div className="absolute -bottom-5 left-0 text-xs">
-                        <span 
-                          className="px-2 py-1 rounded-full font-medium shadow"
-                          style={{
-                            backgroundColor: palette.primaryDark,
-                            color: getContrastColor(palette.primaryDark)
-                          }}
-                        >
-                          {getContrastRatio(palette.primary, getContrastColor(palette.primary))}:1
-                        </span>
-                      </div>
+                    </button>
                     </div>
 
                     {/* Secondary Button */}
                     <div className="relative">
-                      <button
+                    <button
                         className="px-6 py-3 rounded-lg font-medium border shadow-sm transition-transform hover:scale-105"
                         style={{ 
-                          backgroundColor: isDarkMode ? palette.neutralDark : palette.neutralLight,
-                          borderColor: palette.neutral,
-                          color: getContrastColor(isDarkMode ? palette.neutralDark : palette.neutralLight)
+                        backgroundColor: isDarkMode ? palette.neutralDark : palette.neutralLight, // Matches card bg
+                        borderColor: palette.neutral, // Matches card border
+                        color: getContrastColor(isDarkMode ? palette.neutralDark : palette.neutralLight)
                         }}
-                      >
+                    >
                         Secondary Button
-                      </button>
-                      <div className="absolute -bottom-5 left-0 text-xs">
-                        <span 
-                          className="px-2 py-1 rounded-full font-medium shadow"
-                          style={{
-                            backgroundColor: palette.neutral,
-                            color: getContrastColor(palette.neutral)
-                          }}
-                        >
-                          {getContrastRatio(
-                            isDarkMode ? palette.neutralDark : palette.neutralLight,
-                            getContrastColor(isDarkMode ? palette.neutralDark : palette.neutralLight)
-                          )}:1
-                        </span>
-                      </div>
+                    </button>
                     </div>
                   </div>
 
@@ -293,13 +272,14 @@ export default function DesignTokenGenerator() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Primary Card */}
                     <div className="relative">
-                      <div
+                    <div
                         className="p-6 rounded-xl shadow-md transition-transform hover:scale-[1.01] h-full"
                         style={{ 
-                          backgroundColor: isDarkMode ? palette.primaryDark : palette.primaryLight,
-                          border: `1px solid ${palette.primary}`
-                        }}
-                      >
+                            backgroundColor: isDarkMode ? palette.primaryDark : palette.primaryLight,
+                            border: `1px solid ${palette.primary}`, 
+                            color: getContrastColor(isDarkMode ? palette.primaryDark : palette.primaryLight) 
+                            }}
+                        >
                         <h3 style={{ color: palette.primary }} className="text-xl font-bold mb-3">Primary Card</h3>
                         <p style={{ color: getContrastColor(isDarkMode ? palette.primaryDark : palette.primaryLight) }} className="text-sm">
                           This card uses the primary color palette variants.
@@ -506,9 +486,10 @@ export default function DesignTokenGenerator() {
       </main>
 
       {/* Footer */}
-      <footer className={`py-6 text-center ${isDarkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-600'}`}>
-        <p>Design Token Generator • Built with Next.js and Tailwind CSS</p>
-      </footer>
+      <footer className={`py-6 text-center transition-colors duration-300 ${isDarkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-600'}`}>
+        <p className="font-medium">Design Token Generator</p>
+        <p className="text-sm mt-1">Built with Next.js, Tailwind CSS, and React Colorful</p>
+    </footer>
     </div>
   );
 }

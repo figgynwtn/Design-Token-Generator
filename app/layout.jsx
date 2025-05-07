@@ -1,4 +1,5 @@
 import './globals.css'
+import PropTypes from 'prop-types';
 
 export const metadata = {
   title: 'Design Token Generator',
@@ -11,6 +12,10 @@ export default function RootLayout({ children }) {
       <body className="min-h-screen bg-gray-50">
         {children}
       </body>
-    </html>
-  )
+      </html>
+  );
 }
+
+RootLayout.propTypes = {
+  children: PropTypes.node.isRequired,
+};

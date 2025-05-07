@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { HexColorPicker } from 'react-colorful';
-import { ClipboardDocumentIcon, ArrowDownTrayIcon, SunIcon, MoonIcon } from '@heroicons/react/24/outline';
-import { generatePalette, generateTailwindConfig, getContrastColor, getContrastRatio } from '@/lib/colors';
+import { ClipboardDocumentIcon, ArrowDownTrayIcon, SunIcon, MoonIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { generatePalette, generateTailwindConfig, getContrastColor, getContrastRatio, generateRandomTheme } from '@/lib/colors';
 
 export default function DesignTokenGenerator() {
   const [color, setColor] = useState('#3b82f6');
@@ -10,6 +10,7 @@ export default function DesignTokenGenerator() {
   const [copied, setCopied] = useState(null);
   const [activeTab, setActiveTab] = useState('preview');
   const [shareUrl, setShareUrl] = useState('');
+  const [draggedColor, setDraggedColor] = useState(null);
   
   const palette = generatePalette(color);
 
@@ -63,6 +64,34 @@ export default function DesignTokenGenerator() {
     }, null, 2);
   };
 
+  const handleShuffleTheme = () => {
+    const randomPalette = generateRandomTheme();
+    setColor(randomPalette.primary);
+  };
+
+  const handleDragStart = (colorName) => {
+    setDraggedColor(colorName);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (targetColorName) => {
+    if (!draggedColor || draggedColor === targetColorName) return;
+    
+    const newPalette = { ...palette };
+    const temp = newPalette[targetColorName];
+    newPalette[targetColorName] = newPalette[draggedColor];
+    newPalette[draggedColor] = temp;
+    
+    if (targetColorName === 'primary' || draggedColor === 'primary') {
+      setColor(newPalette.primary);
+    }
+    
+    setDraggedColor(null);
+  };
+
   return (
     <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Gradient Header */}
@@ -97,26 +126,41 @@ export default function DesignTokenGenerator() {
             />
 
             <div className="flex items-center gap-4">
-            <div className="flex-1">
+              <div className="flex-1">
                 <label htmlFor="color-input" className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                Hex Color
+                  Hex Color
                 </label>
                 <input
-                id="color-input"
-                type="text"
-                value={color}
-                onChange={(e) => setColor(e.target.value)}
-                className={`w-full p-3 rounded-lg border ${
+                  id="color-input"
+                  type="text"
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                  className={`w-full p-3 rounded-lg border ${
                     isDarkMode 
-                    ? 'bg-gray-700 border-gray-600 text-white' 
-                    : 'bg-white border-gray-300 text-black'
-                }`}
+                      ? 'bg-gray-700 border-gray-600 text-white' 
+                      : 'bg-white border-gray-300 text-black'
+                  }`}
                 />
-            </div>
-            <div 
+              </div>
+              <div 
                 className="w-12 h-12 rounded-lg border mt-6"
                 style={{ backgroundColor: color }}
-            />
+              />
+            </div>
+
+            {/* Shuffle Button Section */}
+            <div className="mt-6">
+              <button
+                onClick={handleShuffleTheme}
+                className={`w-full px-4 py-2 rounded-lg flex items-center justify-center gap-2 ${
+                  isDarkMode 
+                    ? 'bg-purple-600 hover:bg-purple-700 text-white' 
+                    : 'bg-purple-500 hover:bg-purple-600 text-white'
+                }`}
+              >
+                <ArrowPathIcon className="h-5 w-5" />
+                Shuffle Colors
+              </button>
             </div>
 
             {/* Color Palette Grid */}
@@ -126,12 +170,23 @@ export default function DesignTokenGenerator() {
               </h3>
               <div className="grid grid-cols-4 gap-3">
                 {Object.entries(palette).map(([name, value]) => (
-                  <div key={name} className="flex flex-col items-center">
+                  <div 
+                    key={name} 
+                    className="flex flex-col items-center"
+                    draggable
+                    onDragStart={() => handleDragStart(name)}
+                    onDragOver={handleDragOver}
+                    onDrop={() => handleDrop(name)}
+                  >
                     <div
-                      className="w-full h-16 rounded-lg border-2 shadow-sm"
+                      className="w-full h-16 rounded-lg border-2 shadow-sm cursor-move hover:border-blue-400 transition-colors"
                       style={{ 
                         backgroundColor: value,
-                        borderColor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'
+                        borderColor: draggedColor === name 
+                          ? '#60a5fa' 
+                          : isDarkMode 
+                            ? 'rgba(255,255,255,0.1)' 
+                            : 'rgba(0,0,0,0.05)'
                       }}
                     />
                     <span className={`text-xs mt-2 font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -173,103 +228,103 @@ export default function DesignTokenGenerator() {
 
             {/* Tab Content */}
             <div className={`rounded-xl p-6 shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            {activeTab === 'preview' && (
+              {activeTab === 'preview' && (
                 <div className="space-y-6">
-                    <h3 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                  <h3 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
                     UI Components Preview
-                    </h3>
-                    
-                    {/* Buttons Section */}
-                    <div className="flex flex-wrap gap-4">
+                  </h3>
+                  
+                  {/* Buttons Section */}
+                  <div className="flex flex-wrap gap-4">
                     {/* Primary Button */}
                     <div className="relative">
-                        <button
+                      <button
                         className="px-6 py-3 rounded-lg font-medium shadow-md transition-transform hover:scale-105"
                         style={{ 
-                            backgroundColor: palette.primary, 
-                            color: getContrastColor(palette.primary) 
+                          backgroundColor: palette.primary, 
+                          color: getContrastColor(palette.primary) 
                         }}
-                        >
+                      >
                         Primary Button
-                        </button>
-                        <div className="absolute -bottom-5 left-0 text-xs">
+                      </button>
+                      <div className="absolute -bottom-5 left-0 text-xs">
                         <span 
-                            className="px-2 py-1 rounded-full font-medium shadow"
-                            style={{
+                          className="px-2 py-1 rounded-full font-medium shadow"
+                          style={{
                             backgroundColor: palette.primaryDark,
                             color: getContrastColor(palette.primaryDark)
-                            }}
+                          }}
                         >
-                            {getContrastRatio(palette.primary, getContrastColor(palette.primary))}:1
+                          {getContrastRatio(palette.primary, getContrastColor(palette.primary))}:1
                         </span>
-                        </div>
+                      </div>
                     </div>
 
-                    {/* Secondary Button - Now with contrast badge */}
+                    {/* Secondary Button */}
                     <div className="relative">
-                        <button
+                      <button
                         className="px-6 py-3 rounded-lg font-medium border shadow-sm transition-transform hover:scale-105"
                         style={{ 
-                            backgroundColor: isDarkMode ? palette.neutralDark : palette.neutralLight,
-                            borderColor: palette.neutral,
-                            color: getContrastColor(isDarkMode ? palette.neutralDark : palette.neutralLight)
+                          backgroundColor: isDarkMode ? palette.neutralDark : palette.neutralLight,
+                          borderColor: palette.neutral,
+                          color: getContrastColor(isDarkMode ? palette.neutralDark : palette.neutralLight)
                         }}
-                        >
+                      >
                         Secondary Button
-                        </button>
-                        <div className="absolute -bottom-5 left-0 text-xs">
+                      </button>
+                      <div className="absolute -bottom-5 left-0 text-xs">
                         <span 
-                            className="px-2 py-1 rounded-full font-medium shadow"
-                            style={{
+                          className="px-2 py-1 rounded-full font-medium shadow"
+                          style={{
                             backgroundColor: palette.neutral,
                             color: getContrastColor(palette.neutral)
-                            }}
+                          }}
                         >
-                            {getContrastRatio(
+                          {getContrastRatio(
                             isDarkMode ? palette.neutralDark : palette.neutralLight,
                             getContrastColor(isDarkMode ? palette.neutralDark : palette.neutralLight)
-                            )}:1
+                          )}:1
                         </span>
-                        </div>
+                      </div>
                     </div>
-                    </div>
+                  </div>
 
-                    {/* Card Section */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Card Section */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Primary Card */}
                     <div className="relative">
-                        <div
+                      <div
                         className="p-6 rounded-xl shadow-md transition-transform hover:scale-[1.01] h-full"
                         style={{ 
-                            backgroundColor: isDarkMode ? palette.primaryDark : palette.primaryLight,
-                            border: `1px solid ${palette.primary}`
+                          backgroundColor: isDarkMode ? palette.primaryDark : palette.primaryLight,
+                          border: `1px solid ${palette.primary}`
                         }}
-                        >
+                      >
                         <h3 style={{ color: palette.primary }} className="text-xl font-bold mb-3">Primary Card</h3>
                         <p style={{ color: getContrastColor(isDarkMode ? palette.primaryDark : palette.primaryLight) }} className="text-sm">
-                            This card uses the primary color palette variants.
+                          This card uses the primary color palette variants.
                         </p>
-                        </div>
+                      </div>
                     </div>
 
                     {/* Secondary Card */}
                     <div className="relative">
-                        <div
+                      <div
                         className="p-6 rounded-xl shadow-md transition-transform hover:scale-[1.01] h-full"
                         style={{ 
-                            backgroundColor: isDarkMode ? palette.neutralDark : palette.neutralLight,
-                            border: `1px solid ${palette.neutral}`
+                          backgroundColor: isDarkMode ? palette.neutralDark : palette.neutralLight,
+                          border: `1px solid ${palette.neutral}`
                         }}
-                        >
+                      >
                         <h3 style={{ color: palette.secondary }} className="text-xl font-bold mb-3">Secondary Card</h3>
                         <p style={{ color: getContrastColor(isDarkMode ? palette.neutralDark : palette.neutralLight) }} className="text-sm">
-                            This card uses the neutral color palette variants.
+                          This card uses the neutral color palette variants.
                         </p>
-                        </div>
+                      </div>
                     </div>
-                    </div>
+                  </div>
                 </div>
-                )}
+              )}
 
               {activeTab === 'CSS' && (
                 <div>

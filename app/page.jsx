@@ -202,28 +202,33 @@ export default function DesignTokenGenerator() {
 
           <div className="space-y-6">
           <div className={`rounded-xl p-1 transition-colors duration-300 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
-            <div className="flex overflow-x-auto pb-1">
-                <div className="flex space-x-1 min-w-max"> 
+            <div className="flex overflow-x-auto scrollbar-hide"> {/* Hide scrollbar for cleaner look */}
+                <div className="flex space-x-1 min-w-max">
                 {['preview', 'CSS', 'tailwind', 'figma', 'share'].map((tab) => (
                     <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
-                        activeTab === tab
+                    className={`
+                        py-2 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap
+                        ${activeTab === tab
                         ? isDarkMode
                             ? 'bg-gray-600 text-white shadow-md'
                             : 'bg-white text-gray-900 shadow-md'
                         : isDarkMode
                         ? 'text-gray-300 hover:bg-gray-600 hover:text-white'
                         : 'text-gray-600 hover:bg-gray-200'
-                    }`}
+                        }
+                        px-3 md:px-4 /* Different padding for mobile vs desktop */
+                        min-w-[70px] /* Set minimum width for all tabs */
+                        text-center /* Ensure text alignment is consistent */
+                    `}
                     >
                     {tab.charAt(0).toUpperCase() + tab.slice(1)}
                     </button>
                 ))}
                 </div>
             </div>
-            </div>
+        </div>
 
             <div className={`rounded-xl p-6 shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
               {activeTab === 'preview' && (
